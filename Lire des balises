@@ -1,0 +1,50 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.*;
+
+public class Solution {
+    public static void main(String[] args) throws IOException {
+        String tag = "<" + args[0];
+        String closeTag = "</" + args[0];
+        TreeMap<Integer, Integer> startAndEndOfTags = new TreeMap<>();
+
+        BufferedReader buffer = new BufferedReader(new InputStreamReader(System.in));
+        String fileName = buffer.readLine();
+        buffer.close();
+
+        ArrayList<String> set = new ArrayList<>();
+        BufferedReader fileReader = new BufferedReader(new FileReader(fileName));
+        String line = "";
+        StringBuilder wholeText = new StringBuilder();
+
+        while ((line = fileReader.readLine()) != null) {
+            wholeText.append(line.trim());
+        }
+        fileReader.close();
+
+        String wholeTextStr = wholeText.toString();
+
+        if(wholeTextStr.contains(tag)) {
+            for (int i = 0; i < wholeTextStr.length(); i++) {
+                if(wholeTextStr.indexOf(tag, i) > 0 && wholeTextStr.indexOf(closeTag, i) > 0) {
+                    int index = wholeTextStr.indexOf(tag, wholeTextStr.indexOf(tag, i) + 1);    // if our TAG appear twice index of second  same Tag is a index
+                    if(index > wholeTextStr.indexOf(closeTag, i) || index < 0)                              // check id openTag appear before closerTag
+                        startAndEndOfTags.put(wholeTextStr.indexOf(tag, i), wholeTextStr.indexOf(closeTag, i)+closeTag.length()+1);     // for find exactly closerTag
+                    else
+                        startAndEndOfTags.put(wholeTextStr.indexOf(tag, i), wholeTextStr.indexOf(closeTag, wholeTextStr.indexOf(closeTag, i)+1)+closeTag.length()+1);
+                }
+            }
+
+            for (Map.Entry<Integer, Integer> i: startAndEndOfTags.entrySet()) {
+                set.add(wholeTextStr.substring(i.getKey(), i.getValue()));
+
+            }
+
+            for (String i: set) {
+                System.out.println(i);
+            }
+        }
+    }
+}
