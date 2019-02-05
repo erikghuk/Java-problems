@@ -1,0 +1,49 @@
+import java.io.IOException;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.concurrent.atomic.AtomicLong;
+
+public class Solution {
+
+    public static void main(String[] args) throws IOException {
+        String pathStr = "D:/MyFolder";
+
+        Path path = Paths.get(pathStr);
+
+
+
+
+        if(!Files.isDirectory(path)) {
+            System.out.print(path.toAbsolutePath() + " - не папка");
+            return;
+        }
+        Files.walkFileTree(path, new MyFileVisitor());
+
+
+
+        System.out.println("количество файлов в директории и поддиректориях - " + MyFileVisitor.count);
+        System.out.println("общее количество байт, которое хранится в директории] - " + MyFileVisitor.size.get());
+        System.out.println("Dir count - " +  MyFileVisitor.countDir);
+
+    }
+    public static class MyFileVisitor extends SimpleFileVisitor<Path> {
+        static int count = 0, countDir = -1;
+
+        final static AtomicLong size = new AtomicLong(0);
+
+        @Override
+        public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+            countDir++;
+            return FileVisitResult.CONTINUE;
+        }
+
+        @Override
+        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+            //System.out.println(file.getFileName());
+
+            size.addAndGet(attrs.size());
+            count++;
+            return FileVisitResult.CONTINUE;
+        }
+    }
+}
