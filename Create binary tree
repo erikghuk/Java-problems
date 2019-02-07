@@ -1,0 +1,149 @@
+
+import java.io.Serializable;
+import java.util.*;
+
+public class CustomTree extends AbstractList<String> implements Cloneable, Serializable {
+    private Entry root;
+    private static boolean alreadyRemove;
+    private ArrayList<Entry> list = new ArrayList<>();
+    private Map<Entry, Entry> parentMap = new HashMap<>();
+    private Queue<Entry> que = new LinkedList<>();
+    private Queue<Entry> queR = new LinkedList<>();
+
+    CustomTree() {
+        root = new Entry<>("0");
+    }
+
+    @Override
+    public int size() {
+        return parentMap.size();
+    }
+
+    String getParent(String s) {
+        Entry parent = new Entry(null);
+        for (Map.Entry<Entry, Entry> i: parentMap.entrySet()) {
+            if(i.getKey().elementName.equals(s)) {
+                parent = i.getValue();
+                break;
+            }
+        }
+        return parent.elementName;
+    }
+
+    private Entry findParent(String s) {
+        Entry parent = new Entry(null);
+        for (Map.Entry<Entry, Entry> i: parentMap.entrySet()) {
+            if(i.getKey().elementName.equals(s)) {
+                parent = i.getValue();
+                break;
+            }
+        }
+        return parent;
+    }
+
+    @Override
+    public boolean remove(Object o) {
+        queR.clear();
+        Entry parent = null;
+        if(!(o instanceof String))
+            throw new UnsupportedOperationException();
+
+        for (Entry entry : list) {                      // find root from list for start delete all branches from this root
+            if (entry.elementName.equals(o)) {
+                parent = entry;
+                break;
+            }
+        }
+
+        if(findParent((String) o).leftChild == parent)          // make them free
+            findParent((String) o).leftChild = null;
+        else if(findParent((String) o).rightChild == parent)
+            findParent((String) o).rightChild = null;
+
+        que.add(findParent((String)o));
+
+        if(parent == null) {
+            return false;
+        }
+
+        int i = list.indexOf(parent);
+
+        while (i < list.size()) {
+            if(list.get(i).leftChild != null) {
+                queR.add(list.get(i).leftChild);
+                list.get(i).leftChild = null;
+            }
+            else if(list.get(i).rightChild != null) {
+                queR.add(list.get(i).rightChild);
+                list.get(i).rightChild = null;
+            }
+            else {
+                list.get(i).deleted = true;
+                list.get(i).availableToAddRightChildren = true;
+                list.get(i).availableToAddLeftChildren = true;
+                parentMap.remove(list.get(i));
+                if(queR.size() != 0) {
+                    i = list.indexOf(queR.poll());
+
+                }
+                else
+                    break;
+            }
+        }
+        alreadyRemove = true;
+        return true;
+    }
+
+    @Override
+    public boolean add(String s) {
+        Entry<String> newNode = new Entry<>(s);
+        que.removeIf(entry -> entry.deleted);           // delete all clear nodes from queue "que"
+        if(alreadyRemove)
+            root = que.peek();                          // next node in "que" is our wanted node for become as root
+        que.add(newNode);
+        while (que.size() != 0) {
+            if(root.leftChild == null) {                //if root is available to add left or right children
+                root.leftChild = newNode;
+                list.add(newNode);
+                parentMap.put(newNode, root);
+                return true;
+            }
+            else if(root.rightChild == null) {
+                root.rightChild = newNode;
+                list.add(newNode);
+                parentMap.put(newNode, root);
+                return true;
+            }
+            else {                                      // if not, root become the next node from que:
+                root = que.peek();
+                if(root.rightChild != null)
+                    que.remove();
+            }
+        }
+        return true;
+    }
+
+
+    public String get(int index) {throw new UnsupportedOperationException();}
+    public String set(int index, String element) {throw new UnsupportedOperationException();}
+    public void add(int index, String element) {throw new UnsupportedOperationException();}
+    public String remove(int index) {throw new UnsupportedOperationException();}
+    public List<String> subList(int fromIndex, int toIndex) {throw new UnsupportedOperationException();}
+    protected void removeRange(int fromIndex, int toIndex) {throw new UnsupportedOperationException();}
+    public boolean addAll(int index, Collection<? extends String> c) {throw new UnsupportedOperationException();}
+
+
+
+    static class Entry<T> implements Serializable{
+        String elementName;
+        boolean availableToAddLeftChildren, availableToAddRightChildren;
+        boolean deleted;
+        Entry<T> leftChild, rightChild;
+
+        Entry(String str) {
+            this.elementName = str;
+            this.availableToAddRightChildren = true;
+            this.availableToAddLeftChildren = true;
+        }
+    }
+}
