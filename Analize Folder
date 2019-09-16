@@ -14,15 +14,15 @@ public class Solution {
 
 
         if(!Files.isDirectory(path)) {
-            System.out.print(path.toAbsolutePath() + " - не папка");
+            System.out.print(path.toAbsolutePath() + " - not a folder");
             return;
         }
         Files.walkFileTree(path, new MyFileVisitor());
 
 
 
-        System.out.println("количество файлов в директории и поддиректориях - " + MyFileVisitor.count);
-        System.out.println("общее количество байт, которое хранится в директории] - " + MyFileVisitor.size.get());
+        System.out.println("file count in folders and subfolders - " + MyFileVisitor.count);
+        System.out.println("all bytes count in folder - " + MyFileVisitor.size.get());
         System.out.println("Dir count - " +  MyFileVisitor.countDir);
 
     }
