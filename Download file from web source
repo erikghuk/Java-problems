@@ -9,7 +9,7 @@ import java.nio.file.StandardCopyOption;
 public class Solution {
 
     public static void main(String[] args) throws IOException {
-        Path passwords = downloadFile("https://javarush.ru/testdata/secretPasswords.txt", Paths.get("D:/Web/Test"));
+        Path passwords = downloadFile("https://tempUrl.com/testdata/secretPasswords.txt", Paths.get("D:/Web/Test"));
 
         for (String line : Files.readAllLines(passwords)) {
             System.out.println(line);
