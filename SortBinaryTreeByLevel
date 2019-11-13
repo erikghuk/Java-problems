@@ -1,0 +1,78 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Queue;
+import java.util.LinkedList;
+
+class Main {
+  public static void main(String[] args) { 
+    Node ac = new Node(null, null, 26);
+    Node ab = new Node(null, null, 25);
+    Node aa = new Node(null, null, 24);
+
+    Node z = new Node(null, null, 23);
+    Node y = new Node(null, null, 22);
+    Node x = new Node(null, null, 21); 
+    Node w = new Node(null, null, 20);
+    Node v = new Node(null, null, 19);
+
+    Node u = new Node(null, null, 18);
+    Node t = new Node(null, null, 17);
+    Node s = new Node(null, null, 16);
+
+    Node r = new Node(null, null, 15);
+    Node q = new Node(null, null, 14);
+    Node p = new Node(null, null, 13); 
+    Node o = new Node(null, null, 15);
+    Node n = new Node(ab, ac, 14);
+    Node m = new Node(z, aa, 13);
+    Node l = new Node(x, y, 12);
+    Node k = new Node(v, w, 11);
+    Node j = new Node(t, u, 10);
+    Node i = new Node(r, s, 9);
+    Node h = new Node(p, q, 8);
+    Node g = new Node(n, o, 7);
+    Node f = new Node(l, m, 6);
+
+    Node e = new Node(j, k, 5);
+    Node d = new Node(h, i, 4);
+    Node c = new Node(f, g, 3);
+    Node b = new Node(d, e, 2);
+    Node a = new Node(b, c, 1);
+    System.out.println(treeByLevels(a));
+  }
+
+  public static List<Integer> treeByLevels(Node node) {
+    List<Integer> resultList = new ArrayList<>();
+    Queue<Node> tempNodes = new LinkedList<>();
+    Node current;
+    tempNodes.add(node);
+    resultList.add(node.value);
+    while (true) {
+      current = tempNodes.poll();
+      if(current.left != null) {
+        tempNodes.add(current.left);
+        resultList.add(current.left.value);
+        
+      }
+      if(current.right != null) {        
+        tempNodes.add(current.right);
+        resultList.add(current.right.value);
+      }
+      if(tempNodes.isEmpty())
+        break;
+      
+    }
+    return resultList;
+  }
+}
+class Node {
+  public Node left;
+  public Node right;
+  public int value;
+
+  public Node(Node l, Node r, int v) {
+    left = l;
+    right = r;
+    value = v;
+  }
+}
